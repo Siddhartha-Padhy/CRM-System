@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics</title>
+    <style>
+        /* Reset basic styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* Header section styling */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .back-button {
+            padding: 8px 15px;
+            background-color: #357ABD;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #285A8E;
+        }
+
+        h1 {
+            color: #4A90E2;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        /* Table container */
+        .table-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Main table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            color: #4A90E2;
+            font-weight: bold;
+            font-size: 1em;
+            padding-top: 15px;
+        }
+
+        /* Subtable styling */
+        .subtable {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .subtable td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9em;
+        }
+
+        .subtable th {
+            background-color: #f0f4ff;
+            color: #357ABD;
+            padding: 10px 12px;
+            font-size: 1em;
+        }
+
+        /* Subheading styling */
+        .subheading {
+            color: #357ABD;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button class="back-button" onclick="history.back()">Back</button>
+        <h1>Analytics</h1>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Current revenue</th>
+                <td id="currentRevenue">$0</td>
+            </tr>
+            <tr>
+                <th>Expected revenue to be gained</th>
+                <td id="expectedRevenue">$0</td>
+            </tr>
+        </table>
+
+        <!-- Total interactions with each customer -->
+        <div class="subheading">Total interactions with each customer</div>
+		<table class="subtable" id="customer-interactions">
+		    <tbody id="customerInteractions">
+		        <!-- Dynamic content will be added here by JavaScript -->
+		    </tbody>
+		</table>
+
+        <!-- Sales in each stage -->
+        <div class="subheading">Sales in each stage</div>
+        <table class="subtable">
+            <tr>
+                <th>Lead</th>
+                <td id="leadStage">0</td>
+            </tr>
+            <tr>
+                <th>Contact Made</th>
+                <td id="contactMadeStage">0</td>
+            </tr>
+            <tr>
+                <th>Qualification</th>
+                <td id="qualificationStage">0</td>
+            </tr>
+            <tr>
+                <th>Demo Scheduled</th>
+                <td id="demoScheduledStage">0</td>
+            </tr>
+            <tr>
+                <th>Closed</th>
+                <td id="closedStage">0</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        async function fetchSalesStageCount() {
+        	try {
+                const response = await fetch('/api/sales/totalDealSizeForClosedSales');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch total deal size for closed sales');
+                }
+                const totalDealSize = await response.json();
+                document.getElementById('currentRevenue').textContent = (totalDealSize!=null)?"$"+totalDealSize.toFixed(2):'$0';
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('currentRevenue').textContent = 'Failed to load total deal size';
+            }
+            
+            try {
+                const response = await fetch('/api/sales/totalDealSizeForUnclosedSales');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch total deal size for closed sales');
+                }
+                const totalDealSize = await response.json();
+                document.getElementById('expectedRevenue').textContent = (totalDealSize!=null)?"$"+totalDealSize.toFixed(2):'$0';
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('expectedRevenue').textContent = 'Failed to load total deal size';
+            }
+
+        	
+            try {
+                const response = await fetch('/api/sales/salesStageCount');
+                const data = await response.json();
+
+                // Set values for each stage in the HTML
+                document.getElementById('leadStage').innerText = data['Lead'] || 0;
+                document.getElementById('contactMadeStage').innerText = data['Contact Made'] || 0;
+                document.getElementById('qualificationStage').innerText = data['Qualification'] || 0;
+                document.getElementById('demoScheduledStage').innerText = data['Demo Scheduled'] || 0;
+                document.getElementById('closedStage').innerText = data['Closed'] || 0;
+
+            } catch (error) {
+                console.error('Error fetching sales stage data:', error);
+            }
+            
+            try {
+                const response = await fetch('/api/customerLogs/countByCustomer');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                const customerInteractionsTable = document.getElementById('customerInteractions');
+                
+                // Clear the table before adding new data
+                customerInteractionsTable.innerHTML = '';
+
+                // Loop through each customer and add a row for their interaction count
+                for (const [customer, count] of Object.entries(data)) {
+                    const row = document.createElement('tr');
+
+                    const customerCell = document.createElement('th');
+                    customerCell.textContent = customer;
+
+                    const countCell = document.createElement('td');
+                    countCell.textContent = `${count} interactions`;
+
+                    row.appendChild(customerCell);
+                    row.appendChild(countCell);
+                    customerInteractionsTable.appendChild(row);
+                }
+            } catch (error) {
+                console.error('Error fetching customer interactions:', error);
+            }
+        }
+
+        // Call function to fetch data on page load
+        window.addEventListener('DOMContentLoaded', fetchSalesStageCount);
+    </script>
+
+</body>
+</html>

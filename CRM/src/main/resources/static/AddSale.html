@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Sale</title>
+<style>
+/* Reset some default styles */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f4f4f9;
+	color: #333;
+	padding: 20px;
+}
+
+/* Header section styling */
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 30px;
+}
+
+h1 {
+	color: #4A90E2;
+	font-size: 1.8em;
+	font-weight: bold;
+}
+
+/* Back button styling */
+.back-button {
+	padding: 8px 15px;
+	background-color: #357ABD;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 0.9em;
+	transition: background-color 0.3s;
+}
+
+.back-button:hover {
+	background-color: #285A8E;
+}
+
+/* Form container styling */
+.form-container {
+	max-width: 500px;
+	margin: 0 auto;
+	padding: 25px;
+	background-color: #fff;
+	box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1);
+	border-radius: 10px;
+}
+
+/* Form group styling */
+.form-group {
+	margin-bottom: 20px;
+}
+
+label {
+	display: block;
+	font-weight: bold;
+	margin-bottom: 8px;
+	color: #555;
+}
+
+input[type="text"], input[type="number"], input[type="date"] {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	font-size: 1em;
+	transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+	border-color: #4A90E2;
+	outline: none;
+}
+
+/* Submit button styling */
+.submit-button {
+	width: 100%;
+	padding: 12px;
+	background-color: #4A90E2;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	font-size: 1em;
+	font-weight: bold;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+	background-color: #357ABD;
+}
+</style>
+</head>
+<body>
+	<div class="header">
+		<button class="back-button" onclick="history.back()">Back</button>
+		<h1>Add Sale</h1>
+	</div>
+
+	<div class="form-container">
+		<form action="/submit-sale" method="post">
+			<div class="form-group">
+				<label for="productName">Product Name</label>
+				<input type="text" id="productName" name="productName" placeholder="Enter product name" required>
+			</div>
+
+			<div class="form-group">
+				<label for="productStage">Product Stage</label>
+				<input type="text" id="productStage" name="productStage" placeholder="Enter product stage" required>
+			</div>
+
+			<div class="form-group">
+				<label for="dealSize">Deal Size</label>
+				<input type="number" id="dealSize" name="dealSize" placeholder="Enter deal size" required>
+			</div>
+
+			<div class="form-group">
+				<label for="closingDate">Closing Date</label>
+				<input type="date" id="closingDate" name="closingDate" required>
+			</div>
+
+			<button type="submit" class="submit-button">Submit</button>
+		</form>
+	</div>
+
+	<script>
+    document.querySelector('form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Collect form data
+        const productName = document.getElementById('productName').value;
+        const productStage = document.getElementById('productStage').value;
+        const dealSize = document.getElementById('dealSize').value;
+        const closingDate = document.getElementById('closingDate').value;
+
+        // Create data object
+        const saleData = {
+            product: productName,
+            stage: productStage,
+            dealSize: dealSize,
+            closingDate: closingDate
+        };
+
+        try {
+            // Send POST request
+            const response = await fetch("/api/sales/addSale", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(saleData)
+            });
+
+            // Check response status
+            if (response.ok) {
+                alert("Sale has been added successfully!");
+            } else {
+                alert("Failed to add sale. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to add sale. Please try again.");
+        }
+    });
+	</script>
+
+</body>
+</html>

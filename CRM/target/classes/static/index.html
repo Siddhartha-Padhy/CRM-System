@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Dashboard</title>
+    <style>
+        /* Basic Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            text-align: center;
+        }
+
+        /* Header Styling */
+        h1 {
+            color: #4A90E2;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        /* Card Styling */
+        .card {
+            display: inline-block;
+            width: 200px;
+            padding: 20px;
+            margin: 10px;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Button Styling */
+        .card button {
+            padding: 10px 15px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #4A90E2;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card button:hover {
+            background-color: #357ABD;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>CRM System</h1>
+        <div class="card">
+            <h2>Analytics</h2>
+            <button onclick="location.href='Analytics.html'">Go to Analytics</button>
+        </div>
+        <div class="card">
+            <h2>Sales</h2>
+            <button onclick="location.href='Sales.html'">Go to Sales</button>
+        </div>
+    </div>
+</body>
+</html>
